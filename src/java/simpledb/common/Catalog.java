@@ -144,7 +144,7 @@ public class Catalog {
     }
 
     public Iterator<Integer> tableIdIterator() {
-        // Added: Step 8 - iterate over all known table ids
+        // Added: Step 8 - return an iterator over the table ids
         return tables.keySet().iterator();
     }
 

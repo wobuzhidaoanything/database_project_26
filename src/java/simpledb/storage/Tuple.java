@@ -26,17 +26,15 @@ public class Tuple implements Serializable {
      */
     public Tuple(TupleDesc td) {
         // some code goes here
-        //Added 2: store the scehma and allocated one array slot per field
+        //Added 2: store the schema and allocate one array slot per field
         this.td = td;
         this.fields = new Field[td.numFields()];
-
     }
 
     /**
      * @return The TupleDesc representing the schema of this tuple.
      */
     public TupleDesc getTupleDesc() {
-    
         // some code goes here
         //Added 3: return the stored schema
         return td;

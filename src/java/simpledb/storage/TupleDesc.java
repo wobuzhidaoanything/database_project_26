@@ -84,7 +84,7 @@ public class TupleDesc implements Serializable {
      */
     public TupleDesc(Type[] typeAr) {
         // some code goes here
-        //Added 2 - build TDitems from typeAR and fieldAR in parallel
+        //Added 2 - build TDitems from typeAR with unnamed fields
         items = new ArrayList<>();
         for (Type type : typeAr) {
             items.add(new TDItem(type, null));
@@ -219,7 +219,7 @@ public class TupleDesc implements Serializable {
 
     public boolean equals(Object o) {
         // some code goes here
-        //Added 7: equal if sam enumber of fields and matching field types
+        //Added 7: equal if same number of fields and matching field types
 
         if (!(o instanceof TupleDesc)) {
             return false;
