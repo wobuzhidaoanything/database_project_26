@@ -112,8 +112,18 @@ public class SeqScan implements OpIterator {
      */
     public TupleDesc getTupleDesc() {
         // some code goes here
-        // Added 7: get tuple description using tupleid
-        return Database.getCatalog().getTupleDesc(tableid);
+        // Added 7: retrieve tupledesc, get types and fields (while prepending alias to fields), then return new tupledesc
+        TupleDesc tupleDesc = Database.getCatalog().getTupleDesc(tableid);
+        int numFields = tupleDesc.numFields();
+        Type[] typeAr = new Type[numFields];
+        String[] fieldAr = new String[numFields];
+
+        for (int i = 0; i < numFields; i++) {
+            typeAr[i] = tupleDesc.getFieldType(i);
+            fieldAr[i] = tableAlias + "." + tupleDesc.getFieldName(i);
+        }
+
+        return new TupleDesc(typeAr, fieldAr);
     }
 
     public boolean hasNext() throws TransactionAbortedException, DbException {
