@@ -73,8 +73,11 @@ public class HeapPage implements Page {
     */
     private int getNumTuples() {        
         // some code goes here
-        return 0;
-
+        // we add 1 because of the extra bit required to track whether the slot is empty
+        // num of tuples = page size/(tuple size + 1)
+        // *8 to everything cause the formula is for bits
+        // i am using java int to manage the flooring, instead of writing floor explicitly
+        return (BufferPool.getPageSize() * 8) / ((td.getSize() * 8) + 1);
     }
 
     /**
@@ -82,9 +85,8 @@ public class HeapPage implements Page {
      * @return the number of bytes in the header of a page in a HeapFile with each tuple occupying tupleSize bytes
      */
     private int getHeaderSize() {        
-        
         // some code goes here
-        return 0;
+        return Math.ceilDiv(getNumTuples(), 8);
                  
     }
     
@@ -117,8 +119,8 @@ public class HeapPage implements Page {
      * @return the PageId associated with this page.
      */
     public HeapPageId getId() {
-    // some code goes here
-    throw new UnsupportedOperationException("implement this");
+        // some code goes here
+        return this.pid;
     }
 
     /**
@@ -288,15 +290,23 @@ public class HeapPage implements Page {
      */
     public int getNumEmptySlots() {
         // some code goes here
-        return 0;
+        int emptySlots = 0;
+        for (int i = 0; i < numSlots; i++) {
+            if (!isSlotUsed(i)) {
+                emptySlots++;
+            }
+        }
+        return emptySlots;
     }
 
     /**
      * Returns true if associated slot on this page is filled.
      */
     public boolean isSlotUsed(int i) {
-        // some code goes here
-        return false;
+        // just check the used bit
+        int byteIndex = i / 8;
+        int bitIndex = i % 8;
+        return (header[byteIndex] & (1 << bitIndex)) != 0;
     }
 
     /**
@@ -312,8 +322,28 @@ public class HeapPage implements Page {
      * (note that this iterator shouldn't return tuples in empty slots!)
      */
     public Iterator<Tuple> iterator() {
-        // some code goes here
-        return null;
+        // anonymous inner class
+        return new Iterator<Tuple>() {
+            private int slot = 0;
+
+            public boolean hasNext() {
+                while (slot < numSlots && !isSlotUsed(slot)) {
+                    slot++;
+                }
+                return slot < numSlots;
+            }
+
+            public Tuple next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                return tuples[slot++];
+            }
+
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 
 }

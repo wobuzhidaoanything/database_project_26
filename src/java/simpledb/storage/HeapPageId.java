@@ -10,14 +10,19 @@ public class HeapPageId implements PageId {
      * @param tableId The table that is being referenced
      * @param pgNo The page number in that table.
      */
+
+    // set some private final fields to store the tableId and page number first
+    private final int tableId;
+    private final int pgNo; 
+
     public HeapPageId(int tableId, int pgNo) {
-        // some code goes here
+        this.tableId = tableId;
+        this.pgNo = pgNo;
     }
 
     /** @return the table associated with this PageId */
     public int getTableId() {
-        // some code goes here
-        return 0;
+        return this.tableId;
     }
 
     /**
@@ -25,8 +30,7 @@ public class HeapPageId implements PageId {
      *   this PageId
      */
     public int getPageNumber() {
-        // some code goes here
-        return 0;
+        return this.pgNo;
     }
 
     /**
@@ -36,8 +40,7 @@ public class HeapPageId implements PageId {
      * @see BufferPool
      */
     public int hashCode() {
-        // some code goes here
-        throw new UnsupportedOperationException("implement this");
+        return Integer.hashCode(tableId) * 31 + Integer.hashCode(pgNo);
     }
 
     /**
@@ -48,8 +51,15 @@ public class HeapPageId implements PageId {
      *   ids are the same)
      */
     public boolean equals(Object o) {
-        // some code goes here
-        return false;
+        if (this == o) {
+            return true;
+        }
+        // we can't call equals here cause it'll be an infinite loop, so we use instanceof and cast to check if o is a HeapPageId and then compare the fields
+        if (!(o instanceof HeapPageId)) {
+            return false;
+        }
+        HeapPageId other = (HeapPageId) o;
+        return this.tableId == other.tableId && this.pgNo == other.pgNo;
     }
 
     /**
@@ -59,7 +69,9 @@ public class HeapPageId implements PageId {
      *  constructors.
      */
     public int[] serialize() {
-        int[] data = new int[2];
+        int[] data = new int[2]; 
+        // fix the array to 2 items. according to PageId interface, 
+        // we need to return an array of integers that contains the tableId and the page number
 
         data[0] = getTableId();
         data[1] = getPageNumber();

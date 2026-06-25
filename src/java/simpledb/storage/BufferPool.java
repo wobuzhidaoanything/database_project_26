@@ -8,7 +8,8 @@ import simpledb.transaction.TransactionAbortedException;
 import simpledb.transaction.TransactionId;
 
 import java.io.*;
-
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -33,6 +34,13 @@ public class BufferPool {
     constructor instead. */
     public static final int DEFAULT_PAGES = 50;
 
+    //The  buffer pool , need to implement the limit on how many pages to be held and a place to store cached pages 
+    //Added 1: declare ar field to remember the maximum number of pages in the buffer pool 
+    private final int numPages;
+
+    //Added 1: declare a field for the actual page cache 
+    private final Map<PageId, Page> pages;
+
     /**
      * Creates a BufferPool that caches up to numPages pages.
      *
@@ -40,6 +48,10 @@ public class BufferPool {
      */
     public BufferPool(int numPages) {
         // some code goes here
+        //Added 2: store the limit n the empty cache
+        this.numPages = numPages;
+        this.pages = new ConcurrentHashMap<>();
+
     }
     
     public static int getPageSize() {
@@ -74,7 +86,22 @@ public class BufferPool {
     public  Page getPage(TransactionId tid, PageId pid, Permissions perm)
         throws TransactionAbortedException, DbException {
         // some code goes here
-        return null;
+        //Added 3: return cached page if present
+        if (pages.containsKey(pid)) {
+            return pages.get(pid);
+        }
+
+        // Added: Step 3 - for lab1, throw if the pool is full instead of evicting
+        if (pages.size() >= numPages) {
+            throw new DbException("BufferPool is full: cannot fetch new page " + pid);
+        }
+
+        // Added: Step 3 - fetch the page from disk via its DbFile, then cache it
+        int tableId = pid.getTableId();
+        DbFile file = Database.getCatalog().getDatabaseFile(tableId);
+        Page page = file.readPage(pid);
+        pages.put(pid, page);
+        return page;
     }
 
     /**
