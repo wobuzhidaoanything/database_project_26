@@ -6,3 +6,6 @@ ant runtest -Dtest RecordIdTest
 ant runtest -Dtest HeapPageReadTest
 ant runtest -Dtest HeapFileReadTest
 ant runsystest -Dtest ScanTest 
+
+ant
+java -classpath dist/simpledb.jar simpledb.test

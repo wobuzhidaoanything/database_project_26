@@ -7,7 +7,6 @@ import simpledb.transaction.*;
 public class test {
 
     public static void main(String[] argv) {
-
         // construct a 3-column table schema
         Type types[] = new Type[]{ Type.INT_TYPE, Type.INT_TYPE, Type.INT_TYPE };
         String names[] = new String[]{ "field0", "field1", "field2" };
@@ -35,6 +34,7 @@ public class test {
         } catch (Exception e) {
             System.out.println ("Exception : " + e);
         }
-    }
 
+        System.out.println("Test passed");
+    }
 }
