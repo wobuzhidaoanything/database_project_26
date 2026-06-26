@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Catalog {
 
     // Added: Step 1 - small helper class bundling everything we need to know about one table
-    private static class TableInfo {
+    private class TableInfo {
         public final DbFile file;
         public final String name;
         public final String pkeyField;
@@ -170,9 +170,7 @@ public class Catalog {
     public void loadSchema(String catalogFile) {
         String line = "";
         String baseFolder=new File(new File(catalogFile).getAbsolutePath()).getParent();
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(catalogFile));
-            
+        try (BufferedReader br = new BufferedReader(new FileReader(catalogFile))) {
             while ((line = br.readLine()) != null) {
                 //assume line is of the format name (field type, field type, ...)
                 String name = line.substring(0, line.indexOf("(")).trim();
@@ -214,6 +212,6 @@ public class Catalog {
         } catch (IndexOutOfBoundsException e) {
             System.out.println ("Invalid catalog entry : " + line);
             System.exit(0);
-        }
+        } 
     }
 }

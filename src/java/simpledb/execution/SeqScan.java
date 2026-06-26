@@ -21,7 +21,7 @@ public class SeqScan implements OpIterator {
     private static final long serialVersionUID = 1L;
 
     // Added 1: add private fields
-    private TransactionId tid;
+    private final TransactionId tid;
     private int tableid;
     private String tableAlias;
     private DbFileIterator it;
@@ -66,7 +66,7 @@ public class SeqScan implements OpIterator {
      * */
     public String getAlias() {
         // some code goes here
-        // Added 4: return the alias assigned during construction
+        // Added 4: return table alias
         return tableAlias;
     }
 
@@ -112,17 +112,22 @@ public class SeqScan implements OpIterator {
      */
     public TupleDesc getTupleDesc() {
         // some code goes here
-        // Added 7: retrieve tupledesc, get types and fields (while prepending alias to fields), then return new tupledesc
+        // Added 7
+        // retrieve tupledesc from tableid
         TupleDesc tupleDesc = Database.getCatalog().getTupleDesc(tableid);
+
+        // prepare arrays for copying tuple description
         int numFields = tupleDesc.numFields();
         Type[] typeAr = new Type[numFields];
         String[] fieldAr = new String[numFields];
 
+        // copy tuple description while prepending table alias to field name
         for (int i = 0; i < numFields; i++) {
             typeAr[i] = tupleDesc.getFieldType(i);
             fieldAr[i] = tableAlias + "." + tupleDesc.getFieldName(i);
         }
 
+        // construct and return new tuple description
         return new TupleDesc(typeAr, fieldAr);
     }
 
@@ -134,14 +139,14 @@ public class SeqScan implements OpIterator {
 
     public Tuple next() throws NoSuchElementException,
             TransactionAbortedException, DbException {
-        // Added 8: call the iterator
+        // Added 8: call the iterator method
         return it.next();
     }
 
     public void close() {
         // Added 8: close the iterator and unset
         it.close();
-        it = null;
+        it = null; // set to null ensures closed iterator won't be accidentally used
     }
 
     public void rewind() throws DbException, NoSuchElementException,

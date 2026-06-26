@@ -10,7 +10,6 @@ import simpledb.transaction.TransactionId;
 import java.io.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * BufferPool manages the reading and writing of pages into memory from
@@ -35,7 +34,7 @@ public class BufferPool {
     public static final int DEFAULT_PAGES = 50;
 
     //The  buffer pool , need to implement the limit on how many pages to be held and a place to store cached pages 
-    //Added 1: declare ar field to remember the maximum number of pages in the buffer pool 
+    //Added 1: declare a field to remember the maximum number of pages in the buffer pool 
     private final int numPages;
 
     //Added 1: declare a field for the actual page cache 
@@ -83,7 +82,7 @@ public class BufferPool {
      * @param pid the ID of the requested page
      * @param perm the requested permissions on the page
      */
-    public  Page getPage(TransactionId tid, PageId pid, Permissions perm)
+    public Page getPage(TransactionId tid, PageId pid, Permissions perm)
         throws TransactionAbortedException, DbException {
         // some code goes here
         //Added 3: return cached page if present
